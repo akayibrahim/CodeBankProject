@@ -1,4 +1,4 @@
 CodeBankProject
 ===============
 
-Eclipse Plugin - Sharinh code blocks
+Eclipse Plugin - Sharing code blocks
