@@ -1,0 +1,74 @@
+import java.util.concurrent.TimeUnit;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CachingConfigurerSupport;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
+import com.google.common.cache.CacheBuilder;
+
+@EnableCaching
+@Configuration
+@Component
+@ConfigurationProperties("cache")
+public class CacheConfig extends CachingConfigurerSupport {
+    public static final String ONE_MINUTE = "cacheManagerForOneMinute";
+    public static final String ONE_HOUR = "cacheManagerForOneHour";
+    public static final String ONE_DAY = "cacheManagerForOneDay";
+    public static final String TEN_MINUTES = "cacheManagerForTenMinutes";
+    public static final int TIME_TO_LIVE_ONE_MINUTE = 1;
+    public static final int TIME_TO_LIVE_TEN_MINUTES = 10;
+    public static final int TIME_TO_LIVE_ONE_HOUR = 60;
+    public static final int TIME_TO_LIVE_ONE_DAY = 60 * 24;
+    public static final int MAXIMUM_SIZE = 100;
+    
+    @Bean
+    public CacheManager cacheManagerForOneMinute() {
+        return new ConcurrentMapCacheManager() {
+            @Override
+            protected Cache createConcurrentMapCache(final String name) {
+                return new ConcurrentMapCache(name,
+                        CacheBuilder.newBuilder().expireAfterWrite(TIME_TO_LIVE_ONE_MINUTE, TimeUnit.MINUTES).maximumSize(MAXIMUM_SIZE).build().asMap(), false);
+            }
+        };
+    }
+    
+    @Bean
+    @Primary
+    public CacheManager cacheManagerForOneHour() {
+        return new ConcurrentMapCacheManager() {
+            @Override
+            protected Cache createConcurrentMapCache(final String name) {
+                return new ConcurrentMapCache(name,
+                        CacheBuilder.newBuilder().expireAfterWrite(TIME_TO_LIVE_ONE_HOUR, TimeUnit.MINUTES).maximumSize(MAXIMUM_SIZE).build().asMap(), false);
+            }
+        };
+    }
+    
+    @Bean
+    public CacheManager cacheManagerForOneDay() {
+        return new ConcurrentMapCacheManager() {
+            @Override
+            protected Cache createConcurrentMapCache(final String name) {
+                return new ConcurrentMapCache(name,
+                        CacheBuilder.newBuilder().expireAfterWrite(TIME_TO_LIVE_ONE_DAY, TimeUnit.MINUTES).maximumSize(MAXIMUM_SIZE).build().asMap(), false);
+            }
+        };
+    }
+    
+    @Bean
+    public CacheManager cacheManagerForTenMinutes() {
+        return new ConcurrentMapCacheManager() {
+            @Override
+            protected Cache createConcurrentMapCache(final String name) {
+                return new ConcurrentMapCache(name,
+                        CacheBuilder.newBuilder().expireAfterWrite(TIME_TO_LIVE_TEN_MINUTES, TimeUnit.MINUTES).maximumSize(MAXIMUM_SIZE).build().asMap(), false);
+            }
+        };
+    }
+}
